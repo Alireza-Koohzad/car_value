@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 
@@ -8,8 +8,8 @@ export class UsersController {
     constructor(private userService : UsersService){}
 
     @Post('signup')
-    createUser (@Body() body : CreateUserDto) {
-        this.userService.create(body.email , body.password); 
+    async createUser (@Body() body : CreateUserDto) {
+        await this.userService.create(body.email , body.password); 
     } 
 
     @Get(':id')
@@ -24,7 +24,10 @@ export class UsersController {
         
     }
 
-
+    @Patch(':id')
+    async updateUser(@Param('id') id :number , @Body() body : any){
+        await this.userService.update(id , body);
+    }
 
 
 }

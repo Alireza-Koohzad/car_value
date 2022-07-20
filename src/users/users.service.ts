@@ -23,12 +23,23 @@ export class UsersService {
     }
 
 
-async find(email : string){
+    async find(email : string){
         const user =  await this.repo.find({where : {email}})
         if(!user)
             throw new NotFoundException();
         
         return user;
     }
+
+    async update(id : number , attrs:Partial<User>){
+        const user = await this.repo.findOne({where : {id}});
+        if(!user)
+            throw new NotFoundException();
+        
+        Object.assign(user,  attrs);
+        
+        return this.repo.save(user);    
+    }
+
 
 }
