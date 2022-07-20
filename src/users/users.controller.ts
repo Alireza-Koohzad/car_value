@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { updateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('auth')
@@ -13,8 +14,8 @@ export class UsersController {
     } 
 
     @Get(':id')
-     async findUser(@Param('id') id : number){
-        return await this.userService.findOne(id)
+     async findUser(@Param('id') id : string){
+        return await this.userService.findOne(parseInt(id))
     }
 
     @Get()
@@ -25,9 +26,14 @@ export class UsersController {
     }
 
     @Patch(':id')
-    async updateUser(@Param('id') id :number , @Body() body : any){
-        await this.userService.update(id , body);
+    async updateUser(@Param('id') id :string , @Body() body : updateUserDto){
+        await this.userService.update(parseInt(id) , body);
     }
 
+
+    @Delete(':id')
+    async deleteUser(@Param('id') id : string){
+        await this.userService.remove(parseInt(id));
+    }
 
 }
