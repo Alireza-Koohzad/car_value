@@ -13,11 +13,15 @@ export class UsersController {
     constructor(private userService : UsersService , private authService : AuthService){}
 
     @Post('signup')
-    async createUser (@Body() body : CreateUserDto) {
+    async signup (@Body() body : CreateUserDto) {
         const user =await  this.authService.signup(body.email , body.password);        
-        return user;
     } 
 
+
+    @Post('signin')
+    async signin (@Body() body : CreateUserDto) {
+        return await this.authService.signin(body.email , body.password);        
+    } 
     
 
     @Get(':id')
