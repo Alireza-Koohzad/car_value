@@ -8,8 +8,8 @@ import { User } from './users.entity';
 import { UsersService } from './users.service';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
-  providers: [UsersService, AuthService , {provide : APP_INTERCEPTOR , useClass : CurrentUserInterceptors},]
+  providers: [UsersService, AuthService, { provide: APP_INTERCEPTOR, useClass: CurrentUserInterceptors },]
 })
-export class UsersModule {}
+export class UsersModule { }

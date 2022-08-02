@@ -8,8 +8,8 @@ export class AuthService {
 
     async signup(email : string  , password : string){
         //check exist email
-        const user = await this.userService.find(email);
-        if(user){
+        const users = await this.userService.find(email);
+        if(users.length){
             throw new BadRequestException("this user has  already exist");
         }
         //hashing password
