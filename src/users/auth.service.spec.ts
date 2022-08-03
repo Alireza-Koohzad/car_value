@@ -7,12 +7,23 @@ import { UsersService } from "./users.service";
 describe('Auth Service', () => {
     let service: AuthService;
     let fakeUserService: Partial<UsersService>;
-
     beforeEach(async () => {
+        // Create a fake copy of the users service
+        const users: User[] = [];
         fakeUserService = {
-            find: () => Promise.resolve([]),
-            create: (email: string, password: string) =>
-                Promise.resolve({ id: 1, email, password } as User),
+            find: (email: string) => {
+                const filteredUsers = users.filter((user) => user.email === email);
+                return Promise.resolve(filteredUsers);
+            },
+            create: (email: string, password: string) => {
+                const user = {
+                    id: Math.floor(Math.random() * 999999),
+                    email,
+                    password,
+                } as User;
+                users.push(user);
+                return Promise.resolve(user);
+            },
         };
 
         const module = await Test.createTestingModule({
@@ -40,8 +51,7 @@ describe('Auth Service', () => {
     });
 
     it('throws an error if user signs up with email that is in use', async () => {
-        fakeUserService.find = () =>
-            Promise.resolve([{ id: 1, email: 'a', password: '1' } as User]);
+        await service.signup('asdf@asdf.com', 'asdf')
         try {
             const user = await service.signup('asdf@asdf.com', 'asdf');
             expect(user).toBeUndefined()
@@ -61,33 +71,20 @@ describe('Auth Service', () => {
 
 
     it('check password comparison when singing in ', async () => {
-        fakeUserService.find = () =>
-            Promise.resolve([{ id: 1, email: 'awfaeg@gmail.com', password: 'aaa' } as User]);
-        try {
-            let user = await service.signin('awfaef@gmail.com', 'bbbb');
-            expect(user).toBeUndefined()
-        } catch (err) {
-
-        }
+        await service.signup('awfaef@gmail.com', 'aaa')
+        let user = await service.signin('awfaef@gmail.com', 'bbbb');
+        expect(user).toBeUndefined()
 
     })
+
+
 
     it('check exist user when password comparison is valid', async () => {
-        fakeUserService.find = () =>
-            Promise.resolve([{ id: 1, email: 'test@test.com', password: 'aaa' } as User]);
-        try {
-            let user = await service.signin('test@test.com', 'aaa')
-            expect(user).toBeDefined()
-        } catch (err) {
-
-        }
+        await service.signup('test@test.com', 'aaa')
+        let user = await service.signin('test@test.com', 'aaa')
+        expect(user).toBeDefined()
 
     })
-
-
-
-
-
 
 })
 
